@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Multiplayer Tetris{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+          rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<header class="bg-dark text-white p-3">
+    <nav class="container">
+        <div class="row">
+            <div class="col-4 nav-left">
+                User: {{username }}
+            </div>
+            <div class="col-4 ">
+              Wins: {{wins}} / Games: {{games}} / Points: {{points}}
+            </div>
+            <div class="col-4 nav-right">
+                <a href="/logout" class="btn btn-light" id="logoutButton">Logout</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+
+<main class="container mt-4">
+    {% block content %}
+    <!-- Content will be overridden by child templates -->
+    {% endblock %}
+</main>
+
+<footer class="bg-dark text-white p-3 mt-4">
+    <div class="container">
+        <!-- Footer content (if any) -->
+    </div>
+</footer>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

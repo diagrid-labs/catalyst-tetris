@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multiplayer Tetris - Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Retro Style CSS -->
+    <link rel="stylesheet" href="static/css/style.css">
+    <!-- Google Font for Retro Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-container bg-dark text-white p-4">
+                    <h2 class="text-center">Login</h2>
+                    <form action="/login" id="login-form" method="post" class="form-group">
+                        <input type="text" id="username" name="username" class="form-control mb-3" placeholder="Username" required>
+                        <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password" required>
+                        <p class="error-message text-danger" id="error-message">
+                            {% with messages = get_flashed_messages(category_filter=["error"]) %}
+                                {% if messages %}
+                                    {{ messages[0] }}
+                                {% endif %}
+                            {% endwith %}
+                        </p>
+                        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                        <p class="switch-form text-center mt-3">New user? <a href="/signup" class="text-info">Sign up here!</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

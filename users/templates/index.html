@@ -1,0 +1,69 @@
+
+
+{% extends 'base.html' %}
+
+{% block title %}Home - Multiplayer Tetris{% endblock %}
+
+{% block content %}
+
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('connect', function() {
+          const div = document.getElementById('waiting');
+          div.style.visibility = 'hidden';
+        });
+        socket.on('redirect_game', (arg) => {
+          const div = document.getElementById('waiting');
+          div.style.visibility = 'hidden';
+          window.location.href = arg;
+        });
+        socket.on('waiting', (arg) => {
+          const div = document.getElementById('waiting');
+          div.style.visibility = 'visible';
+        });
+        function fstartGame(button) {
+            const div = document.getElementById('waiting');
+            div.style.visibility = 'hidden';
+            socket.emit('start_game');
+        };
+    </script>
+
+<div class="row">
+    <section id="startGame" class="col-md-12">
+
+        {% with messages = get_flashed_messages(category_filter=["error"]) %}
+            {% if messages %}
+                    <div class="alert alert-warning" role="alert">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
+        <div id="waiting" style="visibility: hidden;" class="alert alert-warning" role="alert">Waiting for another player to join....</div>
+        <input type="button" class="btn btn-primary is-gradient btn-lg btn-block mb-4" value="Start Game" onClick="fstartGame(this)"/>
+    </section>
+    <section id="leaderboard" class="col-md-12">
+        <h2>Leaderboard {{test}}</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Wins</th>
+                    <th>Games</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member, score in scores %}
+                <tr>
+                    <td>{{ member }}</td>
+                    <td>{{ score.wins | int}}</td>
+                    <td>{{ score.games | int}}</td>
+                    <td>{{ score.points | int}}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </section>
+
+</div>
+{% endblock %}

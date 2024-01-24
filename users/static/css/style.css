@@ -1,0 +1,147 @@
+
+/*
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0a192f;
+    color: #ccd6f6;
+    text-align: center;
+    padding: 50px;
+}
+.form-container {
+    background-color: #112240;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    width: 300px;
+}
+input[type="text"], input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #8892b0;
+    background-color: #0a192f;
+    border-radius: 4px;
+    color: #ccd6f6;
+}
+button {
+    width: 95%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #64ffda;
+    color: #0a192f;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #52e3c2;
+}
+.switch-form {
+    color: #64ffda;
+    cursor: pointer;
+}
+h2 {
+    color: #ccd6f6;
+}
+.error-message {
+    color: #ff6666;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+*/
+
+/* Retro Gaming Style CSS */
+
+body {
+    font-family: 'Press Start 2P', cursive; /* Retro gaming font */
+    background-color: #1a1a1a; /* Dark background */
+    color: #f0f0f0; /* Light text */
+}
+
+header, footer {
+    background-color: #0d6efd; /* Diagrid primary blue */
+}
+
+#logoutButton {
+    font-family: 'Press Start 2P', cursive;
+    background-color: rgb(11, 221, 163);
+    color: #0d6efd;
+    border: none;
+    padding: 3px 6px; /* Reduced padding for smaller size */
+    text-transform: uppercase;
+    font-size: 0.5em; /* Further reduced font size */
+    cursor: pointer;
+}
+
+.btn-primary{
+    background-color: rgb(11, 221, 163)
+}
+
+.btn-diagrid{
+    grid-column-gap: .625rem;
+    grid-row-gap: .625rem;
+    border: 1px solid #121c29;
+    background-color: #121c29;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+    padding: .75rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+ }
+
+.btn.is-gradient {
+  border: 1px solid #0edda3;;
+  color: #121c29;
+  background-image: linear-gradient(106deg, #0edda3 24.05%, #00a7d1 97.15%);
+  transition: transform .25s cubic-bezier(.175, .885, .32, 1.275), background-position .3s;
+}
+.nav-right {
+    text-align: right; /* Aligns content to the right */
+}
+
+.gameScreen {
+    background-color: #262626;
+    height: 400px; /* Fixed height for game screens */
+    margin-bottom: 20px;
+}
+
+#leaderboard {
+    background-color: #333;
+    padding: 15px;
+    color: #f0f0f0;
+}
+
+#leaderboard h2 {
+    font-size: 1em;
+    color: #0d6efd;
+}
+
+h2 {
+    color: #0d6efd; /* Diagrid primary blue */
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+    background-color: #262626;
+}
+
+.table th {
+    background-color: #0d6efd; /* Diagrid primary blue */
+    color: #fff;
+    font-size: 1rem;
+}
+
+.table td {
+    background-color: #333;
+    color: #f0f0f0;
+}
+/* Add more styles as needed */
