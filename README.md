@@ -11,7 +11,7 @@ Watch the webinar where Catalyst and the game are explained:
 ## Prerequisites
 
 - [Docker Desktop](https://docs.docker.com/get-docker/)
-- [Nix](https://nixos.org/download.html)
+- [Nix](https://github.com/DeterminateSystems/nix-installer)
 
 ## Install dependencies
 
