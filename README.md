@@ -4,7 +4,9 @@ Browser based multiplayer Tetris game written in Python and Go using Catalyst (D
 This is a demo project to show off the kind of things you can build with [Diagrid Catalyst](https://www.diagrid.io/catalyst).
 The game is a bit of fun- there are very many ways you can cheat, stay honest (:
 
-Watch the webinar where Catalyst and the game are explained:
+![tetris game](tetris_game.gif)
+
+Watch the webinar on YouTube where Catalyst and the game are explained:
 
 [![Webinar](https://img.youtube.com/vi/VS036hE6cvg/0.jpg)](https://youtu.be/VS036hE6cvg)
 
@@ -64,10 +66,7 @@ users:
 We save user state as JSON objects in Redis with the key being the username.
 We query the top 20 players by wins using Dapr's state Query API.
 For this capability, Redis needs the RediSearch and RedisJSON modules loaded.
-I didn't find an arm64 container image with these modules on the Internet, so we need to build our own here.
-
-Dapr (components-contrib) is also currently bugged when querying RedisJSON so we include a patch fix and build & run our own daprd binary.
-We should contribute this fix upstream and promote the patch in Catalyst.
+We didn't find an arm64 container image with these modules on the Internet, so we need to build our own here.
 
 ## More information
 Do you want to try out Catalyst? Sign up for the [private beta](https://pages.diagrid.io/catalyst-early-access-waitlist)! Want to learn more about Catalyst? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications. Have you built something with Catalyst? Post it in the [Built with Catalyst](https://community.diagrid.io/t/built-with-catalyst/23) topic and get your item featured in the Diagrid newsletter.
