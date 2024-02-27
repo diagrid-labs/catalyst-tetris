@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
-	"name": "Ubuntu",
+	"name": "Nix DevContainer",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"image": "ghcr.io/xtruder/nix-devcontainer:v1",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
 	},
@@ -15,7 +15,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postAttachCommand": "bash scripts/install.sh",
+	//"postAttachCommand": "bash scripts/install.sh",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
