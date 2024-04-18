@@ -1,21 +1,18 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
-	"name": "Nix DevContainer",
+	"name": "Go",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "ghcr.io/xtruder/nix-devcontainer:v1",
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+		"ghcr.io/devcontainers/features/python:1": {}
 	},
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	//"postAttachCommand": "bash scripts/install.sh",
+	"postCreateCommand": "bash scripts/install.sh",
 
 	// Configure tool-specific properties.
 	// "customizations": {},

@@ -70,3 +70,66 @@ We didn't find an arm64 container image with these modules on the Internet, so w
 
 ## More information
 Do you want to try out Catalyst? Sign up for the [private beta](https://pages.diagrid.io/catalyst-early-access-waitlist)! Want to learn more about Catalyst? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications. Have you built something with Catalyst? Post it in the [Built with Catalyst](https://community.diagrid.io/t/built-with-catalyst/23) topic and get your item featured in the Diagrid newsletter.
+
+## Diagrid setup
+
+```bash
+diagrid project create catalyst-tetris --deploy-managed-pubsub --deploy-managed-kv
+```
+
+```bash
+diagrid project get catalyst-tetris
+```
+
+```bash
+diagrid project use catalyst-tetris
+```
+
+```bash
+diagrid appid create game
+```
+
+```bash
+diagrid appid create users
+```
+
+```bash
+diagrid appid list
+```
+
+```bash
+diagrid connection create scorepubsub --type pubsub.diagrid --metadata name=pubsub --metadata value=pubsub
+```
+
+```bash
+diagrid connection create --prompt
+KV Store > Diagrid Key/Value Store > Next > userscores > kvstore
+```
+
+```bash
+diagrid connection list
+```
+
+```bash
+diagrid connection apply -f userscores.yaml
+```
+
+```bash
+diagrid subscription create mysub --connection scorepubsub --topic scoreupdates --route /update-score --scopes users
+```
+
+```bash
+diagrid subscription list
+```
+
+
+## Install dependencies
+
+```bash
+cd users
+pip3 install -r requirements.txt 
+```
+
+diagrid dev start
+
+localhost:5000

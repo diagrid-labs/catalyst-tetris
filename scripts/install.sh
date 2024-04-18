@@ -1,2 +1,5 @@
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux --init none --no-confirm
-bash "../../nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+sudo apt-get update
+sudo apt-get install -y xdg-utils
+curl -o- https://downloads.diagrid.io/cli/install-catalyst.sh | bash
+sudo mv ./diagrid /usr/local/bin
+diagrid update --approve
