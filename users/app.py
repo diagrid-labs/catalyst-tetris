@@ -20,7 +20,8 @@ logging.basicConfig(level=logging.INFO)
 socketio = SocketIO(app)
 
 waiting_list_store_name = 'kvstore'
-user_store_name = 'userscores'
+#user_store_name = 'userscores'
+user_store_name = 'kvstore'
 socket_sessions = dict()
 
 leaderboardQuery = '''
@@ -207,7 +208,7 @@ def socket_disconnect():
     with DaprClient() as dapr_client:
         waiting_list = dapr_client.get_state(store_name=waiting_list_store_name, key='waiting_list')
         if waiting_list.data.decode("utf-8") == session["username"]:
-            dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="",
+            dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="-",
                                    etag=waiting_list.etag)
 
 class GameService():
@@ -219,7 +220,7 @@ class GameService():
             waiting_list = dapr_client.get_state(store_name=waiting_list_store_name, key='waiting_list')
 
             # If no one's waiting, add player1 to the waiting list and show a message to the user
-            if not waiting_list.data:
+            if not waiting_list.data or waiting_list.data.decode("utf-8") != "-":
                 try:
                     # Add player 1 to the waiting list
                     dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list',
@@ -234,7 +235,7 @@ class GameService():
             player2 = waiting_list.data.decode("utf-8")
             try:
                 # Try to remove a player from the waiting list
-                dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="",
+                dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="-",
                                        etag=waiting_list.etag)
             except grpc.RpcError as error:
                 app.logger.error('failed to remove player from waiting list: {0}'.format(error))

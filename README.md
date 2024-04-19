@@ -98,15 +98,6 @@ diagrid appid list
 ```
 
 ```bash
-diagrid connection create scorepubsub --type pubsub.diagrid --metadata name=pubsub --metadata value=pubsub
-```
-
-```bash
-diagrid connection create --prompt
-KV Store > Diagrid Key/Value Store > Next > userscores > kvstore
-```
-
-```bash
 diagrid connection list
 ```
 
@@ -122,14 +113,46 @@ diagrid subscription create mysub --connection scorepubsub --topic scoreupdates 
 diagrid subscription list
 ```
 
+## update dev-catalyst-tetris.yaml
+
+- appId: game
+  appPort: 8001
+  env:
+    DAPR_API_TOKEN:
+    DAPR_APP_ID: game
+    DAPR_GRPC_ENDPOINT: 
+    DAPR_HTTP_ENDPOINT: 
+  workDir: game
+  command: ["go", "run", "main.go"]
+- appId: users
+  appPort: 8002
+  env:
+    DAPR_API_TOKEN:
+    DAPR_APP_ID: users
+    DAPR_GRPC_ENDPOINT:
+    DAPR_HTTP_ENDPOINT:
+    FLASK_KEY: "12345678"
+  workDir: users
+
 
 ## Install dependencies
+
+1. Create a Python virtual environment
+
+```bash
+python3 -m venv env
+```
+
+2. Install requirements
 
 ```bash
 cd users
 pip3 install -r requirements.txt 
 ```
+3. Run the apps
 
+```bash
 diagrid dev start
+```
 
 localhost:5000
