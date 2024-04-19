@@ -106,7 +106,7 @@ diagrid connection apply -f userscores.yaml
 ```
 
 ```bash
-diagrid subscription create mysub --connection scorepubsub --topic scoreupdates --route /update-score --scopes users
+diagrid subscription create pubsub --connection pubsub --topic scoreupdates --route /update-score --scopes users
 ```
 
 ```bash
@@ -141,13 +141,13 @@ diagrid subscription list
 
 ```bash
 python3 -m venv env
+$ source env/bin/activate
 ```
 
 2. Install requirements
 
 ```bash
-cd users
-pip3 install -r requirements.txt 
+pip3 install -r users/requirements.txt 
 ```
 3. Run the apps
 

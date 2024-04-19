@@ -56,7 +56,8 @@ class AppHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
         for player in jdata["data"]:
-            Player(player["User"]).update_score(player["Winner"], player["Score"])
+            if player["User"] and player["Winner"] and player["Score"]:
+                Player(player["User"]).update_score(player["Winner"], player["Score"])
 
 daprdserver = ThreadingHTTPServer(("0.0.0.0", 8002), AppHandler)
 daprdserver_thread = threading.Thread(target=daprdserver.serve_forever)
@@ -196,6 +197,14 @@ def socket_start_game():
     socketio.emit('waiting', room=socket_sessions[player2])
     return
 
+#Create a python function that uses get_state of a key named leaderboard. The result is an array of objects that contains the player name, wins, games and points. The array should be sorted by wins in descending order.
+def get_sorted_leaderboard():
+    with DaprClient() as dapr_client:
+        leaderboard_state = dapr_client.get_state(store_name=user_store_name, key='leaderboard')
+        leaderboard = json.loads(leaderboard_state.data.decode('utf-8'))
+        sorted_leaderboard = sorted(leaderboard, key=lambda player: player['wins'], reverse=True)
+        return sorted_leaderboard
+
 @socketio.on('connect')
 def socket_connect():
     if 'username' not in session:
@@ -208,7 +217,7 @@ def socket_disconnect():
     with DaprClient() as dapr_client:
         waiting_list = dapr_client.get_state(store_name=waiting_list_store_name, key='waiting_list')
         if waiting_list.data.decode("utf-8") == session["username"]:
-            dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="-",
+            dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="",
                                    etag=waiting_list.etag)
 
 class GameService():
@@ -220,7 +229,7 @@ class GameService():
             waiting_list = dapr_client.get_state(store_name=waiting_list_store_name, key='waiting_list')
 
             # If no one's waiting, add player1 to the waiting list and show a message to the user
-            if not waiting_list.data or waiting_list.data.decode("utf-8") != "-":
+            if not waiting_list.daprdserver_thread:
                 try:
                     # Add player 1 to the waiting list
                     dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list',
@@ -235,7 +244,7 @@ class GameService():
             player2 = waiting_list.data.decode("utf-8")
             try:
                 # Try to remove a player from the waiting list
-                dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="-",
+                dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="",
                                        etag=waiting_list.etag)
             except grpc.RpcError as error:
                 app.logger.error('failed to remove player from waiting list: {0}'.format(error))
@@ -274,6 +283,7 @@ class Player():
             resp = dapr_client.get_state(store_name=user_store_name, key=self.username, state_metadata={"contentType": "application/json"})
 
             data = json.loads(resp.data.decode("utf-8"))
+            app.logger.info(data)
             password = data["password"]
             wins = data["wins"]
             if winner:
@@ -282,7 +292,6 @@ class Player():
             games = data["games"] + 1;
 
             try:
-                # Add player 1 to the waiting list
                 dapr_client.save_state(store_name=user_store_name,
                                        key=self.username,
                                        value=json.dumps({"wins": wins, "points": points, "games": games, "password": password, "type": "user"}),
