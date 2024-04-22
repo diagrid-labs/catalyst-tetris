@@ -1,8 +1,12 @@
 # Multiplayer Tetris
 
-Browser based multiplayer Tetris game written in Python and Go using Catalyst (Dapr) for state and communication.
-This is a demo project to show off the kind of things you can build with [Diagrid Catalyst](https://www.diagrid.io/catalyst).
-The game is a bit of fun- there are very many ways you can cheat, stay honest (:
+This is a demo project to highlight how you can build distributed apps using [Diagrid Catalyst](https://www.diagrid.io/catalyst).
+
+This repository contains the source code for a
+browser based multiplayer Tetris game written in Python and Go using Catalyst (serverless Dapr) for state and communication.
+
+
+Don't expect production ready code here. This is just a small and fun project to play around with.
 
 ![tetris game](tetris_game.gif)
 
