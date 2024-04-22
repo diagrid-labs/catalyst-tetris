@@ -20,26 +20,8 @@ logging.basicConfig(level=logging.INFO)
 socketio = SocketIO(app)
 
 waiting_list_store_name = 'kvstore'
-#user_store_name = 'userscores'
 user_store_name = 'kvstore'
 socket_sessions = dict()
-
-leaderboardQuery = '''
-{
- "filter": {
-  "EQ": { "type": "user" }
- },
- "sort": [
-  {
-   "key": "wins",
-   "order": "DESC"
-  }
- ],
- "page": {
-  "limit": 20
- }
-}
-'''
 
 class AppHandler(BaseHTTPRequestHandler):
     def do_POST(self):
