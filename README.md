@@ -8,7 +8,7 @@ browser based multiplayer Tetris game written in Python and Go using Catalyst (s
 
 Don't expect production ready code here. This is just a small and fun project to play around with.
 
-![tetris game](tetris_game.gif)
+![tetris game](images/tetris_game.gif)
 
 Watch the webinar on YouTube where Catalyst and the game are explained:
 
@@ -180,6 +180,11 @@ Once the services are running and connected to the Diagrid cloud you can open a 
 
 You can open a second browser window in private mode to simulate another player.
 
+## Using the Catalyst dashboard
+
+After playing a game, go to the [Catalyst dashboard](https://catalyst.diagrid.io/) and navigate around to see the App Graph, API Logs, and the API Explorer.
+
+![Catalyst App Graph](images/app-graph.png)
 
 ## More information
 
