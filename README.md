@@ -34,67 +34,102 @@ users:
 - Service Invocation: Registers two users ready to play a game with `game` service.
 
 
+# Running locally
 
+This sections covers the steps to run the project locally. It involves some prerequisites that you need to install, getting the source code, the creation of Diagrid Catalyst resources, and updating a Diagrid config file.
 
 ## Prerequisites
 
+To be able to run this project locally, you need to have the following prerequisites installed:
+
 - [Docker Desktop](https://docs.docker.com/get-docker/)
 - [VSCode](https://code.visualstudio.com/) with the [DevContainers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
+- A [Diagrid Catalyst](https://www.diagrid.io/catalyst) account (currently in early access)
 
-## Running locally
+## Get the source code
 
 1. Fork this repo, and clone it to your local machine.
 2. Open the repo in VSCode.
 3. Open the repo in a DevContainer as suggested by VSCode.
+   - This will install some utilities as well as the Diagrid CLI, which is required in the next steps.
 
-## Diagrid setup
+## Create the Diagrid Catalyst resources
+
+Use the Diagrid CLI in the DevContainer to create the Diagrid Catalyst resources as follows:
+
+1. Login into Diagrid using the CLI and follow the instructions:
+
+    ```bash
+    diagrid login
+    ```
+
+2. Create a Catalyst project that includes a managed pubsub and key-value store:
+
+    ```bash
+    diagrid project create catalyst-tetris --deploy-managed-pubsub --deploy-managed-kv
+    ```
+
+3. Set this project as the default for the upcoming commands:
+
+    ```bash
+    diagrid project use catalyst-tetris
+    ```
+
+4. Create an App ID for the `game` and `users` services:
+
+    ```bash
+    diagrid appid create game
+    diagrid appid create users
+    ```
+
+5. You can use the list command to status of the created App IDs:
+
+    ```bash
+    diagrid appid list
+    ```
+
+6. Since the project is created with a managed pubsub and key-value store, you can use the connection command to list these connections:
+
+    ```bash
+    diagrid connection list
+    ```
+
+7. Create a subscription for the pubsub connection that will trigger the `update-score` endpoint in the `users` service:
+
+    ```bash
+    diagrid subscription create pubsub --connection pubsub --topic scoreupdates --route /update-score --scopes users
+    ```
+
+8. List the subscriptions to see status of the subscription:
+
+    ```bash
+    diagrid subscription list
+    ```
+
+## Generate the Diagrid dev config file
+
+Once all the Diagrid Catlayst resources have been created run the following command to generate the Diagrid dev config file in the root of the repo:
 
 ```bash
-diagrid project create catalyst-tetris --deploy-managed-pubsub --deploy-managed-kv
+diagrid dev scaffold
 ```
+This results in a `dev-catalyst-tetris` file in the root of the repo. This file contains the configuration for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Catalyst.
 
-```bash
-diagrid project get catalyst-tetris
-```
+You need to update the following attributes for both the `game` and the `users` service:
 
-```bash
-diagrid project use catalyst-tetris
-```
+- `appPort`
+- `command`
+- `workDir`
 
-```bash
-diagrid appid create game
-```
+The `users` service also requires a `FLASK_KEY` environment variable to be set.
 
-```bash
-diagrid appid create users
-```
+Copy the values from yaml snippet below.
 
-```bash
-diagrid appid list
-```
-
-```bash
-diagrid connection list
-```
-
-```bash
-diagrid connection apply -f userscores.yaml
-```
-
-```bash
-diagrid subscription create pubsub --connection pubsub --topic scoreupdates --route /update-score --scopes users
-```
-
-```bash
-diagrid subscription list
-```
-
-## update dev-catalyst-tetris.yaml
-
+```yaml
 - appId: game
   appPort: 8001
   env:
-    DAPR_API_TOKEN:
+    DAPR_API_TOKEN: 
     DAPR_APP_ID: game
     DAPR_GRPC_ENDPOINT: 
     DAPR_HTTP_ENDPOINT: 
@@ -109,37 +144,41 @@ diagrid subscription list
     DAPR_HTTP_ENDPOINT:
     FLASK_KEY: "12345678"
   workDir: users
+```
 
+## Install the Python dependencies
 
-
-
-
-Now open http://localhost:5000 in either a single browser with another private tab, or two different browsers to play against yourself.
-
-## Install Python dependencies
+The final step is to install the Python dependencies for the `users` service. This can be done by running the following commands in the terminal:
 
 1. Create a Python virtual environment
 
-```bash
-python3 -m venv env
-source env/bin/activate
-```
+    ```bash
+    python3 -m venv env
+    source env/bin/activate
+    ```
 
 2. Install Python requirements
 
-```bash
-pip3 install -r users/requirements.txt
-```
+    ```bash
+    pip3 install -r users/requirements.txt
+    ```
 
-3. Run the apps using the Diagrid CLI
+## Run the services
+
+Now you can start both services via the Diagrid CLI:
 
 ```bash
 diagrid dev start
 ```
 
-Open a browser and navigate to `http://localhost:5000` to play the game.
+Once the services are running and connected to the Diagrid cloud you can open a browser and navigate to `http://localhost:5000` to play the game.
+
 You can open a second browser window in private mode to simulate another player.
 
 
 ## More information
-Do you want to try out Catalyst? Sign up for the [private beta](https://pages.diagrid.io/catalyst-early-access-waitlist)! Want to learn more about Catalyst? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications. Have you built something with Catalyst? Post it in the [Built with Catalyst](https://community.diagrid.io/t/built-with-catalyst/23) topic and get your item featured in the Diagrid newsletter.
+Do you want to try out Catalyst? Sign up for [early access](https://pages.diagrid.io/catalyst-early-access-waitlist)!
+
+Want to learn more about Catalyst? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications.
+
+Have you built something with Catalyst? Post it in the [Built with Catalyst](https://community.diagrid.io/t/built-with-catalyst/23) topic and get your item featured in the Diagrid newsletter.
