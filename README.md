@@ -38,7 +38,7 @@ The `users` service (Python) registers players, receives game results and update
 
 # Running locally
 
-This sections covers the steps to run the project locally. It involves some prerequisites that you need to install, getting the source code, the creation of Diagrid Catalyst resources, and updating a Diagrid config file.
+This sections covers the steps to run the project locally. It involves some prerequisites that you need to install, getting the source code, the creation of Diagrid Catalyst resources, updating a Diagrid dev config file, and installing Python requirements.
 
 ## Prerequisites
 
