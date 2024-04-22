@@ -116,7 +116,7 @@ Once all the Diagrid Catalyst resources have been created run the following comm
 diagrid dev scaffold
 ```
 
-This results in a `dev-catalyst-tetris` file in the root of the repo. This file contains app connection details for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Catalyst.
+This results in a `dev-catalyst-tetris.yaml` file in the root of the repo. This file contains app connection details for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Catalyst.
 
 You need to update the following attributes for both the `game` and the `users` service:
 
