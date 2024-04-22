@@ -18,7 +18,8 @@
 			"extensions": [
 				"ms-python.python",
 				"ms-vscode-remote.remote-containers",
-				"golang.go"
+				"golang.go",
+				"bierner.markdown-mermaid"
 			]
 		}
 	}
