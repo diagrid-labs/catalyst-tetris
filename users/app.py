@@ -20,25 +20,8 @@ logging.basicConfig(level=logging.INFO)
 socketio = SocketIO(app)
 
 waiting_list_store_name = 'kvstore'
-user_store_name = 'userscores'
+user_store_name = 'kvstore'
 socket_sessions = dict()
-
-leaderboardQuery = '''
-{
- "filter": {
-  "EQ": { "type": "user" }
- },
- "sort": [
-  {
-   "key": "wins",
-   "order": "DESC"
-  }
- ],
- "page": {
-  "limit": 20
- }
-}
-'''
 
 class AppHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -55,7 +38,8 @@ class AppHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
         for player in jdata["data"]:
-            Player(player["User"]).update_score(player["Winner"], player["Score"])
+            if player["User"] and player["Winner"] and player["Score"]:
+                Player(player["User"]).update_score(player["Winner"], player["Score"])
 
 daprdserver = ThreadingHTTPServer(("0.0.0.0", 8002), AppHandler)
 daprdserver_thread = threading.Thread(target=daprdserver.serve_forever)
@@ -67,7 +51,6 @@ def home():
         return redirect(url_for('login_page'))
 
     wins, points, games = 0, 0, 0
-    scores_list = []
 
     # Get player score
     with DaprClient() as dapr_client:
@@ -78,19 +61,17 @@ def home():
                 score = json.loads(resp.data.decode("utf-8"))
                 wins, points, games = score["wins"], score["points"], score["games"]
             try:
-                leaderboard = dapr_client.query_state(store_name=user_store_name,
-                                                  query=leaderboardQuery,
-                                                  states_metadata={"queryIndexName": "leaderboardIndex","contentType": "application/json"})
-                for r in leaderboard.results:
-                    d = json.loads(r.value.decode("utf-8"))
-                    scores_list.append((r.key, {'wins': d["wins"], 'points': d["points"], 'games': d['games']}))
+                leaderboard = get_sorted_leaderboard_dict()
+                # for r in leaderboard.results:
+                #     d = json.loads(r.value.decode("utf-8"))
+                #     scores_list.append((r.key, {'wins': d["wins"], 'points': d["points"], 'games': d['games']}))
             except grpc.RpcError as error:
                 app.logger.error('failed to get leaderboard: {0}'.format(error))
         except grpc.RpcError as error:
             session.pop('username', None)
             return redirect(url_for('login_page'))
-
-    return render_template('index.html', username=session["username"], wins=wins, points=points, games=games, scores=scores_list)
+    app.logger.info("Leaderboard: "+str(leaderboard))
+    return render_template('index.html', username=session["username"], wins=wins, points=points, games=games, scores=leaderboard)
 
 @app.route('/signup', methods=["GET"])
 def signup_page():
@@ -195,6 +176,32 @@ def socket_start_game():
     socketio.emit('waiting', room=socket_sessions[player2])
     return
 
+def get_leaderboard_dict():
+    with DaprClient() as dapr_client:
+        leaderboard_state = dapr_client.get_state(store_name=user_store_name, key='leaderboard')
+        if not leaderboard_state.data:
+            leaderboard = {}
+        else:
+            leaderboard = json.loads(leaderboard_state.data.decode('utf-8'))
+        return leaderboard
+
+def get_sorted_leaderboard_dict():
+    leaderboard = get_leaderboard_dict()
+    app.logger.info("Leaderboard: "+str(leaderboard))
+    if len(leaderboard) > 0:
+        sorted_leaderboard = leaderboard #sorted(get_leaderboard(), key=lambda player: player.wins, reverse=True)
+        return sorted_leaderboard
+    else:
+        sorted_leaderboard = {}
+    return sorted_leaderboard
+
+def update_leaderboard_dict(key, score):
+    app.logger.info("Updating leaderboard for " + key + " with " + str(score))
+    with DaprClient() as dapr_client:
+        leaderboard = get_leaderboard_dict();
+        leaderboard[key]=score;
+        dapr_client.save_state(store_name=user_store_name, key='leaderboard', value=json.dumps(leaderboard), state_metadata={"contentType": "application/json"})
+
 @socketio.on('connect')
 def socket_connect():
     if 'username' not in session:
@@ -234,8 +241,7 @@ class GameService():
             player2 = waiting_list.data.decode("utf-8")
             try:
                 # Try to remove a player from the waiting list
-                dapr_client.save_state(store_name=waiting_list_store_name, key='waiting_list', value="",
-                                       etag=waiting_list.etag)
+                dapr_client.delete_state(store_name=waiting_list_store_name, key='waiting_list', etag=waiting_list.etag)
             except grpc.RpcError as error:
                 app.logger.error('failed to remove player from waiting list: {0}'.format(error))
                 # Someone else has already removed the player from the waiting list. Try again.
@@ -273,6 +279,7 @@ class Player():
             resp = dapr_client.get_state(store_name=user_store_name, key=self.username, state_metadata={"contentType": "application/json"})
 
             data = json.loads(resp.data.decode("utf-8"))
+            app.logger.info(data)
             password = data["password"]
             wins = data["wins"]
             if winner:
@@ -281,12 +288,13 @@ class Player():
             games = data["games"] + 1;
 
             try:
-                # Add player 1 to the waiting list
-                dapr_client.save_state(store_name=user_store_name,
-                                       key=self.username,
-                                       value=json.dumps({"wins": wins, "points": points, "games": games, "password": password, "type": "user"}),
-                                       state_metadata={"contentType": "application/json"},
-                                       etag=resp.etag)
+                playerScore = {'wins': wins, 'points': points, 'games': games}
+                update_leaderboard_dict(self.username, playerScore)
+                # dapr_client.save_state(store_name=user_store_name,
+                #                        key=self.username,
+                #                        value=json.dumps({"wins": wins, "points": points, "games": games, "password": password, "type": "user"}),
+                #                        state_metadata={"contentType": "application/json"},
+                #                        etag=resp.etag)
             except grpc.RpcError as error:
                 # Someone else added a score in the meantime. Try again!
                 self.update_score(winner, upoints)

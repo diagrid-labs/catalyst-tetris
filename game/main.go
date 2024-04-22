@@ -181,7 +181,7 @@ func main() {
 		fmt.Printf("i-win: %s %s %d %d\n", s.ID(), conn.user, session.conn1.score, session.conn2.score)
 
 		log.Printf("publishing score for winner: %s\n", conn.user)
-		err = client.PublishEvent(context.Background(), "scorepubsub", "scoreupdates", []gameResult{
+		err = client.PublishEvent(context.Background(), "pubsub", "scoreupdates", []gameResult{
 			{
 				User:   conn.user,
 				Winner: true,

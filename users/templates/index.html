@@ -52,12 +52,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for member, score in scores %}
+                {% for key, value in scores.items() %}
                 <tr>
-                    <td>{{ member }}</td>
-                    <td>{{ score.wins | int}}</td>
-                    <td>{{ score.games | int}}</td>
-                    <td>{{ score.points | int}}</td>
+                    <td>{{ key }}</td>
+                    <td>{{ value["wins"] | int}}</td>
+                    <td>{{ value["games"] | int}}</td>
+                    <td>{{ value["points"] | int}}</td>
                 </tr>
                 {% endfor %}
 
