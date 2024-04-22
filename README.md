@@ -141,13 +141,13 @@ diagrid subscription list
 
 ```bash
 python3 -m venv env
-$ source env/bin/activate
+source env/bin/activate
 ```
 
 2. Install requirements
 
 ```bash
-pip3 install -r users/requirements.txt 
+pip3 install -r users/requirements.txt
 ```
 3. Run the apps
 
