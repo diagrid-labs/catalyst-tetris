@@ -108,12 +108,13 @@ Use the Diagrid CLI in the DevContainer to create the Diagrid Catalyst resources
 
 ## Generate the Diagrid dev config file
 
-Once all the Diagrid Catlayst resources have been created run the following command to generate the Diagrid dev config file in the root of the repo:
+Once all the Diagrid Catalyst resources have been created run the following command to generate the Diagrid dev config file in the root of the repo:
 
 ```bash
 diagrid dev scaffold
 ```
-This results in a `dev-catalyst-tetris` file in the root of the repo. This file contains the configuration for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Catalyst.
+
+This results in a `dev-catalyst-tetris` file in the root of the repo. This file contains app connection details for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Catalyst.
 
 You need to update the following attributes for both the `game` and the `users` service:
 
@@ -177,6 +178,7 @@ You can open a second browser window in private mode to simulate another player.
 
 
 ## More information
+
 Do you want to try out Catalyst? Sign up for [early access](https://pages.diagrid.io/catalyst-early-access-waitlist)!
 
 Want to learn more about Catalyst? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications.
