@@ -69,7 +69,6 @@ def home():
         return redirect(url_for('login_page'))
 
     wins, points, games = 0, 0, 0
-    scores_list = []
 
     # Get player score
     with DaprClient() as dapr_client:
@@ -80,19 +79,17 @@ def home():
                 score = json.loads(resp.data.decode("utf-8"))
                 wins, points, games = score["wins"], score["points"], score["games"]
             try:
-                leaderboard = dapr_client.query_state(store_name=user_store_name,
-                                                  query=leaderboardQuery,
-                                                  states_metadata={"queryIndexName": "leaderboardIndex","contentType": "application/json"})
-                for r in leaderboard.results:
-                    d = json.loads(r.value.decode("utf-8"))
-                    scores_list.append((r.key, {'wins': d["wins"], 'points': d["points"], 'games': d['games']}))
+                leaderboard = get_sorted_leaderboard_dict()
+                # for r in leaderboard.results:
+                #     d = json.loads(r.value.decode("utf-8"))
+                #     scores_list.append((r.key, {'wins': d["wins"], 'points': d["points"], 'games': d['games']}))
             except grpc.RpcError as error:
                 app.logger.error('failed to get leaderboard: {0}'.format(error))
         except grpc.RpcError as error:
             session.pop('username', None)
             return redirect(url_for('login_page'))
-
-    return render_template('index.html', username=session["username"], wins=wins, points=points, games=games, scores=scores_list)
+    app.logger.info("Leaderboard: "+str(leaderboard))
+    return render_template('index.html', username=session["username"], wins=wins, points=points, games=games, scores=leaderboard)
 
 @app.route('/signup', methods=["GET"])
 def signup_page():
@@ -197,13 +194,31 @@ def socket_start_game():
     socketio.emit('waiting', room=socket_sessions[player2])
     return
 
-#Create a python function that uses get_state of a key named leaderboard. The result is an array of objects that contains the player name, wins, games and points. The array should be sorted by wins in descending order.
-def get_sorted_leaderboard():
+def get_leaderboard_dict():
     with DaprClient() as dapr_client:
         leaderboard_state = dapr_client.get_state(store_name=user_store_name, key='leaderboard')
-        leaderboard = json.loads(leaderboard_state.data.decode('utf-8'))
-        sorted_leaderboard = sorted(leaderboard, key=lambda player: player['wins'], reverse=True)
+        if not leaderboard_state.data:
+            leaderboard = {}
+        else:
+            leaderboard = json.loads(leaderboard_state.data.decode('utf-8'))
+        return leaderboard
+
+def get_sorted_leaderboard_dict():
+    leaderboard = get_leaderboard_dict()
+    app.logger.info("Leaderboard: "+str(leaderboard))
+    if len(leaderboard) > 0:
+        sorted_leaderboard = leaderboard #sorted(get_leaderboard(), key=lambda player: player.wins, reverse=True)
         return sorted_leaderboard
+    else:
+        sorted_leaderboard = {}
+    return sorted_leaderboard
+
+def update_leaderboard_dict(key, score):
+    app.logger.info("Updating leaderboard for " + key + " with " + str(score))
+    with DaprClient() as dapr_client:
+        leaderboard = get_leaderboard_dict();
+        leaderboard[key]=score;
+        dapr_client.save_state(store_name=user_store_name, key='leaderboard', value=json.dumps(leaderboard), state_metadata={"contentType": "application/json"})
 
 @socketio.on('connect')
 def socket_connect():
@@ -291,11 +306,13 @@ class Player():
             games = data["games"] + 1;
 
             try:
-                dapr_client.save_state(store_name=user_store_name,
-                                       key=self.username,
-                                       value=json.dumps({"wins": wins, "points": points, "games": games, "password": password, "type": "user"}),
-                                       state_metadata={"contentType": "application/json"},
-                                       etag=resp.etag)
+                playerScore = {'wins': wins, 'points': points, 'games': games}
+                update_leaderboard_dict(self.username, playerScore)
+                # dapr_client.save_state(store_name=user_store_name,
+                #                        key=self.username,
+                #                        value=json.dumps({"wins": wins, "points": points, "games": games, "password": password, "type": "user"}),
+                #                        state_metadata={"contentType": "application/json"},
+                #                        etag=resp.etag)
             except grpc.RpcError as error:
                 # Someone else added a score in the meantime. Try again!
                 self.update_score(winner, upoints)
