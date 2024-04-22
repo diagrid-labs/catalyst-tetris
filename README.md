@@ -5,8 +5,7 @@ This is a demo project to highlight how you can build distributed apps using [Di
 This repository contains the source code for a
 browser based multiplayer Tetris game written in Python and Go using Catalyst (serverless Dapr) for state and communication.
 
-
-Don't expect production ready code here. This is just a small and fun project to play around with.
+> Don't expect production ready code here. This is just a fun project to play around with! 😁
 
 ![tetris game](images/tetris_game.gif)
 
@@ -14,29 +13,28 @@ Watch the webinar on YouTube where Catalyst and the game are explained:
 
 [![Webinar](https://img.youtube.com/vi/VS036hE6cvg/0.jpg)](https://youtu.be/VS036hE6cvg)
 
-## Components
+## Architecture
 
-game:
-- scorepubsub (pubsub.redis): Sends game results to `users` service.
+```mermaid
+flowchart TB
+  users -- Service Invocation --> game
+  broker[Message Broker]
+  users -- State Set/Get --> kvstore
+  game -. PubSub .-> broker
+  broker -.PubSub .-> users
+  subgraph diagrid[Diagrid Catalyst]
+    kvstore[KV Store]
+    broker[Message Broker]
+  end
+  subgraph cloud[Cloud provider]
+    users[Users Service]
+    game[Game Service]
+  end
+```
 
-users:
-- scorepubsub (pubsub.redis): Receives game results from `game` service.
-- kvstore (state.in-memory): Stores playing waiting in the lobby.
-- userscores (state.redis): Stores user state consisting of username, hashed password, wins, points, and games played.
+The `game` service (Go) registers incoming games from the users service and it sends game results to the `users` service via PubSub messaging.
 
-## APIs
-
-game:
-- PubSub (scorepubsub): Publishes game results to `users` consumer service.
-- Service Invocation: Registers incoming games from `users` service with two players.
-
-users:
-- State Set/Get (kvstore): Stores users waiting in the lobby.
-- State Set/Get (userscores): Stores user state consisting of username, hashed password, wins, points, and games played.
-- State Query (userscores): List the top 20 players by wins.
-- PubSub (scorepubsub): Receives game results from `game` producer service.
-- Service Invocation: Registers two users ready to play a game with `game` service.
-
+The `users` service (Python) registers players, receives game results and updates the user scores in the key-value store.
 
 # Running locally
 
