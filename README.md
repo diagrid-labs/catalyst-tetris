@@ -147,6 +147,8 @@ Copy the values from yaml snippet below.
     DAPR_HTTP_ENDPOINT:
     FLASK_KEY: "12345678"
   workDir: users
+  command: ["python3", "app.py"]
+appLogDestination: ""
 ```
 
 ## Install the Python dependencies
