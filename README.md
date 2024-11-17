@@ -99,7 +99,7 @@ Use the Diagrid CLI in the DevContainer to create the Diagrid Catalyst resources
 7. Create a subscription for the pubsub connection that will trigger the `update-score` endpoint in the `users` service:
 
     ```bash
-    diagrid subscription create pubsub --connection pubsub --topic scoreupdates --route /update-score --scopes users
+    diagrid subscription create pubsub --component pubsub --topic scoreupdates --route /update-score --scopes users
     ```
 
 8. List the subscriptions to see status of the subscription:
@@ -175,6 +175,14 @@ Now you can start both services via the Diagrid CLI:
 ```bash
 diagrid dev start
 ```
+
+> ### Note: 
+> If you are on MacOS, you might get the following error on startup:
+> ```bash
+> == APP - users == Port 5000 is in use by another program. Either identify and stop that program, or start the server with a different port.
+> == APP - users == On macOS, try disabling the 'AirPlay Receiver' service from System Preferences -> General -> AirDrop & Handoff.
+> ```
+> You may need to follow the aforementioned steps to disable the 'AirPlay Receiver' since it binds to `localhost:5000`.
 
 Once the services are running and connected to the Diagrid cloud you can open a browser and navigate to `http://localhost:5000` to play the game.
 
