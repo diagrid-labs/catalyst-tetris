@@ -1,15 +1,15 @@
 # Multiplayer Tetris
 
-This is a demo project to highlight how you can build distributed apps using [Diagrid Catalyst](https://www.diagrid.io/catalyst).
+This is a demo project to highlight how you can build distributed apps using [Diagrid](https://www.diagrid.io/catalyst).
 
 This repository contains the source code for a
-browser based multiplayer Tetris game written in Python and Go using Catalyst (serverless Dapr) for state and communication.
+browser based multiplayer Tetris game written in Python and Go using Diagrid (serverless Dapr) for state and communication.
 
 > Don't expect production ready code here. This is just a fun project to play around with! 😁
 
 ![tetris game](images/tetris_game.gif)
 
-Watch the webinar on YouTube where Catalyst and the game are explained:
+Watch the webinar on YouTube where Diagrid and the game are explained:
 
 [![Webinar](https://img.youtube.com/vi/VS036hE6cvg/0.jpg)](https://youtu.be/VS036hE6cvg)
 
@@ -38,7 +38,7 @@ The `users` service (Python) registers players, receives game results and update
 
 # Running locally
 
-This sections covers the steps to run the project locally. It involves some prerequisites that you need to install, getting the source code, the creation of Diagrid Catalyst resources, updating a Diagrid dev config file, and installing Python requirements.
+This sections covers the steps to run the project locally. It involves some prerequisites that you need to install, getting the source code, the creation of Diagrid resources, updating a Diagrid dev config file, and installing Python requirements.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ To be able to run this project locally, you need to have the following prerequis
 
 - [Docker Desktop](https://docs.docker.com/get-docker/)
 - [VSCode](https://code.visualstudio.com/) with the [DevContainers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
-- A [Diagrid Catalyst](https://www.diagrid.io/catalyst) account (currently in early access)
+- A [Diagrid](https://www.diagrid.io/catalyst) account (currently in early access)
 
 ## Get the source code
 
@@ -55,9 +55,9 @@ To be able to run this project locally, you need to have the following prerequis
 3. Open the repo in a DevContainer as suggested by VSCode.
    - This will install some utilities as well as the Diagrid CLI, which is required in the next steps.
 
-## Create the Diagrid Catalyst resources
+## Create the Diagrid resources
 
-Use the Diagrid CLI in the DevContainer to create the Diagrid Catalyst resources as follows:
+Use the Diagrid CLI in the DevContainer to create the Diagrid resources as follows:
 
 1. Login into Diagrid using the CLI and follow the instructions:
 
@@ -65,7 +65,7 @@ Use the Diagrid CLI in the DevContainer to create the Diagrid Catalyst resources
     diagrid login
     ```
 
-2. Create a Catalyst project that includes a managed pubsub and key-value store:
+2. Create a Diagrid project that includes a managed pubsub and key-value store:
 
     ```bash
     diagrid project create catalyst-tetris --deploy-managed-pubsub --deploy-managed-kv
@@ -110,13 +110,13 @@ Use the Diagrid CLI in the DevContainer to create the Diagrid Catalyst resources
 
 ## Generate the Diagrid dev config file
 
-Once all the Diagrid Catalyst resources have been created run the following command to generate the Diagrid dev config file in the root of the repo:
+Once all the Diagrid resources have been created run the following command to generate the Diagrid dev config file in the root of the repo:
 
 ```bash
 diagrid dev scaffold
 ```
 
-This results in a `dev-catalyst-tetris.yaml` file in the root of the repo. This file contains app connection details for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Catalyst.
+This results in a `dev-catalyst-tetris.yaml` file in the root of the repo. This file contains app connection details for the `game` and `users` services. Some attributes are provided such as `DAPR_API_TOKEN`, `DAPR_APP_ID`, and endpoints provided by Diagrid.
 
 You need to update the following attributes for both the `game` and the `users` service:
 
@@ -180,16 +180,16 @@ Once the services are running and connected to the Diagrid cloud you can open a 
 
 You can open a second browser window in private mode to simulate another player.
 
-## Using the Catalyst dashboard
+## Using the Diagrid Console
 
-After playing a game, go to the [Catalyst dashboard](https://catalyst.diagrid.io/) and navigate around to see the App Graph, API Logs, and the API Explorer.
+After playing a game, go to the [Diagrid Console](https://catalyst.diagrid.io/) and navigate around to see the App Graph, API Logs, and the API Explorer.
 
-![Catalyst App Graph](images/app-graph.png)
+![Diagrid App Graph](images/app-graph.png)
 
 ## More information
 
-Do you want to try out Catalyst? Sign up for [early access](https://pages.diagrid.io/catalyst-early-access-waitlist)!
+Do you want to try out Diagrid? Sign up for [early access](https://pages.diagrid.io/catalyst-early-access-waitlist)!
 
-Want to learn more about Catalyst? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications.
+Want to learn more about Diagrid? Join the [Diagrid Discourse](https://community.diagrid.io/) where application developers share knowledge on building distributed applications.
 
-Have you built something with Catalyst? Post it in the [Built with Catalyst](https://community.diagrid.io/t/built-with-catalyst/23) topic and get your item featured in the Diagrid newsletter.
+Have you built something with Diagrid? Post it in the [Built with Diagrid](https://community.diagrid.io/t/built-with-catalyst/23) topic and get your item featured in the Diagrid newsletter.
